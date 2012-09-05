@@ -3,6 +3,9 @@ require 'rvm/capistrano'
 
 set :application, "FPH Document Storage"
 set :repository,  "https://github.com/nukah/documents-fph.git"
+set :rvm_type, :system
+set :rvm_bin_path, '/usr/local/rvm/bin'
+set :rvm_ruby_string, '1.9.3@documents'
 set :branch, "master"
 set :git_enable_submodules, 1
 set :scm, :git
@@ -12,10 +15,7 @@ set :deploy_via, :remote_cache
 set :user, 'user'
 set :use_sudo, false
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
-
-role :web, "docs.primepress.ru"                          # Your HTTP server, Apache/etc
-role :app, "docs.primepress.ru"                          # This may be the same as your `Web` server
-role :db,  "docs.primepress.ru", :primary => true # This is where Rails migrations will run
+server "docs.primepress.ru", :app, :web, :db, :primary => true
 
 # if you want to clean up old releases on each deploy uncomment this:
 after "deploy:restart", "deploy:cleanup"
