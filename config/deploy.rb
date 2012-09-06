@@ -69,7 +69,7 @@ namespace :deploy do
 
     desc "Stop unicorn"
       task :stop, :except => { :no_release => true } do
-        run "kill -s QUIT `cat /tmp/unicorn.my_site.pid`"
+        run "kill -s QUIT `cat /tmp/unicorn.#{domain_dir}.pid`"
     end
 end
 

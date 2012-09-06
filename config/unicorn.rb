@@ -1,5 +1,5 @@
 worker_processes 6
-listen "/tmp/my_site.socket", :backlog => 64
+listen "/tmp/docs.primepress.socket", :backlog => 64
 preload_app true
 timeout 30
 pid "/tmp/unicorn.docs.primepress.pid"
@@ -18,4 +18,9 @@ before_fork do |server,worker|
         rescue Errno::ENOENT, Errno::ESRCH
         end
     end
+end
+after_fork do |server, worker|
+  if defined?(ActiveRecord::Base)
+    ActiveRecord::Base.establish_connection
+  end
 end
