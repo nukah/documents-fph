@@ -21,6 +21,7 @@ server "docs.primepress.ru", :app, :web, :db, :primary => true
 # if you want to clean up old releases on each deploy uncomment this:
 after "deploy:restart", "deploy:cleanup"
 after "deploy:setup", "deploy:db:setup" unless fetch(:skip_db_setup, false)
+after "deploy", "deploy:precompile_assets"
 
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts
@@ -51,15 +52,9 @@ namespace :db do
 end
 # If you are using Passenger mod_rails uncomment this:
 namespace :deploy do
-#   task :start do ; end
-#   task :stop do ; end
-    task :restart, :roles => :app, :except => { :no_release => true } do
-     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
-   end
-
     desc "Zero-downtime restart of Unicorn"
       task :restart, :except => { :no_release => true } do
-          run "kill -s USR2 `cat /tmp/unicorn.#{domain_dir}.pid`"
+        run "kill -s USR2 `cat /tmp/unicorn.#{domain_dir}.pid`"
     end
 
     desc "Start unicorn"
@@ -71,7 +66,9 @@ namespace :deploy do
       task :stop, :except => { :no_release => true } do
         run "kill -s QUIT `cat /tmp/unicorn.#{domain_dir}.pid`"
     end
+
+    desc "Precompile assets"
+      task :precompile_assets, :except => { :no_release => true } do
+        run "bundle exec rake assets:precompile"
+      end
 end
-
-
-
