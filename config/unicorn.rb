@@ -5,7 +5,7 @@ timeout 30
 pid "/tmp/unicorn.docs.primepress.pid"
 working_directory "/var/www/docs.primepress/current"
 user 'user'
-shared_path = "/var/www/docs.primepress.ru/current"
+shared_path = "/var/www/docs.primepress/current"
 stderr_path "#{shared_path}/log/unicorn.stderr.log"
 stdout_path "#{shared_path}/log/unicorn.stdout.log"
 
