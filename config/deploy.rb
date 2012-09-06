@@ -20,10 +20,35 @@ server "docs.primepress.ru", :app, :web, :db, :primary => true
 
 # if you want to clean up old releases on each deploy uncomment this:
 after "deploy:restart", "deploy:cleanup"
+after "deploy:setup", "deploy:db:setup" unless fetch(:skip_db_setup, false)
 
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts
+namespace :db do
+  desc "Creates Postgres database and appropriate user"
+  task :setup do
+    password = Capistrano::CLI.password_prompt
+    commands = ""
+    commands << "CREATE USER #{user} WITH PASSWORD #{password};"
+    commands << "CREATE DATABASE primepress;"
+    commands << "GRANT ALL PRIVELEGES ON DATABASE primepress TO #{user};"
+    run "sudo -u postgres psql < #{commands.to_s}"
 
+    database_template = <<-EOF
+      production:
+        database: primepress
+        adapter: postgresql
+        username: #{user}
+        password: #{password}
+        encoding: unicode
+        host: localhost
+        pool: 5
+    EOF
+
+    database_yml = ERB.new(database_template).result(binding)
+    put database_yml, "#{current_path}/config/database.yml"
+  end
+end
 # If you are using Passenger mod_rails uncomment this:
 namespace :deploy do
 #   task :start do ; end
