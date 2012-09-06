@@ -3,6 +3,7 @@ require 'rvm/capistrano'
 
 set :application, "FPH Document Storage"
 set :repository,  "https://github.com/nukah/documents-fph.git"
+set :domain, 'docs.primepress'
 set :rvm_type, :system
 set :rvm_bin_path, '/usr/local/rvm/bin'
 set :rvm_ruby_string, '1.9.3@documents'
@@ -10,7 +11,7 @@ set :branch, "master"
 set :git_enable_submodules, 1
 set :scm, :git
 default_run_options[:pty] = true
-set :deploy_to, "/var/www/docs.primepress"
+set :deploy_to, "/var/www/#{domain}"
 set :deploy_via, :remote_cache
 set :user, 'user'
 set :use_sudo, false
@@ -30,4 +31,22 @@ namespace :deploy do
     task :restart, :roles => :app, :except => { :no_release => true } do
      run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
    end
+
+    desc "Zero-downtime restart of Unicorn"
+      task :restart, :except => { :no_release => true } do
+          run "kill -s USR2 `cat /tmp/unicorn.#{domain}.pid`"
+    end
+
+    desc "Start unicorn"
+      task :start, :except => { :no_release => true } do
+        run "cd #{current_path} ; bundle exec unicorn_rails -c config/unicorn.rb -D"
+    end
+
+    desc "Stop unicorn"
+      task :stop, :except => { :no_release => true } do
+        run "kill -s QUIT `cat /tmp/unicorn.my_site.pid`"
+    end
 end
+
+
+
