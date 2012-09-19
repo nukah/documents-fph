@@ -21,7 +21,7 @@ server "docs.primepress.ru", :app, :web, :db, :primary => true
 # if you want to clean up old releases on each deploy uncomment this:
 after "deploy:restart", "deploy:cleanup"
 after "deploy:setup", "deploy:db:setup" unless fetch(:skip_db_setup, false)
-after "deploy", "deploy:precompile_assets"
+after "deploy:create_symlink", "deploy:precompile_assets"
 
 # if you're still using the script/reaper helper you will need
 # these http://github.com/rails/irs_process_scripts
