@@ -20,8 +20,6 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
-gem 'sqlite3', :group => :development
-
 gem 'jquery-rails', '~> 2.0.0'
 
 
@@ -39,5 +37,4 @@ gem 'refinerycms-i18n', '~> 2.0.0'
 #  gem 'refinerycms-page-images', '~> 2.0.0'
 
 
-#gem 'refinerycms-documents', :git => 'https://github.com/nukah/refinerycms-documents.git' 
-gem "refinerycms-documents", :path => "vendor/extensions"
+gem 'refinerycms-documents', :git => 'https://github.com/nukah/refinerycms-documents.git' 
