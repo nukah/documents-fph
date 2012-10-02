@@ -6,3 +6,7 @@ production:
     encoding: unicode
     host: localhost
     pool: 5
+development:
+    adapter: sqlite3
+    database: db/development.sqlite3
+    timeout: 5000

@@ -3,28 +3,28 @@ require 'rvm/capistrano'
 
 set :application, "FPH Document Storage"
 set :repository,  "https://github.com/nukah/documents-fph.git"
-set :domain_dir, 'docs.primepress'
-set :rvm_type, :system
-set :rvm_bin_path, '/usr/local/rvm/bin'
-set :rvm_ruby_string, '1.9.3@documents'
+set :scm, :git
 set :branch, "master"
 set :git_enable_submodules, 1
-set :scm, :git
-default_run_options[:pty] = true
+
+set :domain_dir, "docs.primepress"
+set :user, "user"
+
+set :shell, "/usr/bin/bash"
+set :rvm_type, :system
+
 set :deploy_to, "/var/www/#{domain_dir}"
 set :deploy_via, :remote_cache
-set :user, 'user'
-set :use_sudo, false
-# Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
-server "docs.primepress.ru", :app, :web, :db, :primary => true
+set :use_sudo, true
+server "clodo-storage", :app, :web, :db, :primary => true
+default_run_options[:pty] = true
 
 # if you want to clean up old releases on each deploy uncomment this:
+before "deploy:setup", "deploy:prepare"
 after "deploy:restart", "deploy:cleanup"
 after "deploy:setup", "deploy:db:setup" unless fetch(:skip_db_setup, false)
 #after "deploy:create_symlink", "deploy:precompile_assets"
-
-# if you're still using the script/reaper helper you will need
-# these http://github.com/rails/irs_process_scripts
+#
 namespace :db do
   desc "Creates Postgres database and appropriate user"
   task :setup do
@@ -52,9 +52,21 @@ namespace :db do
 end
 # If you are using Passenger mod_rails uncomment this:
 namespace :deploy do
+    desc "Prepare environment"
+    task :prepare, :except => { :no_release => true } do
+        sudo "apt-get install build-essential curl -y"
+        rvm.install_rvm
+        rvm.install_ruby
+    end
+    
+    desc "Bundle update"
+      task :bundle do
+        run "cd #{current_path} && bundle update"
+    end
+
     desc "Zero-downtime restart of Unicorn"
       task :restart, :except => { :no_release => true } do
-        run "kill -s USR2 `cat /tmp/unicorn.#{domain_dir}.pid`"
+        run "kill -s USR2 `cat #{shared_path}/pids/unicorn.#{domain_dir}.pid`"
     end
 
     desc "Start unicorn"
@@ -64,7 +76,7 @@ namespace :deploy do
 
     desc "Stop unicorn"
       task :stop, :except => { :no_release => true } do
-        run "kill -s QUIT `cat /tmp/unicorn.#{domain_dir}.pid`"
+        run "kill -s QUIT `cat #{shared_path}/pids/unicorn.#{domain_dir}.pid`"
     end
 
     desc "Precompile assets"
