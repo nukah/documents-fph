@@ -17,7 +17,7 @@ Refinery::Pages.configure do |config|
   # config.pages_per_dialog = 14
 
   # Configure how many pages per page should be displayed in the list of pages in the admin area
-  # config.pages_per_admin_index = 20
+  config.pages_per_admin_index = 1000
 
   # Configure whether to strip diacritics from Western characters
   # config.approximate_ascii = false

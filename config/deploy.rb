@@ -1,6 +1,5 @@
 require 'bundler/capistrano'
-require 'rvm/capistrano'
-
+require 'capistrano/rbenv'
 set :application, "FPH Document Storage"
 set :repository,  "https://github.com/nukah/documents-fph.git"
 set :scm, :git
@@ -11,10 +10,13 @@ set :domain_dir, "docs.primepress"
 set :user, "user"
 
 set :shell, "/usr/bin/bash"
-set :rvm_type, :system
-
+set :rbenv_type, :user
+set :rbenv_ruby, '2.1.1'
+set :rbenv_prefix, "RBENV_ROOT=#{fetch(:rbenv_path)} RBENV_VERSION=#{fetch(:rbenv_ruby)} #{fetch(:rbenv_path)}/bin/rbenv exec"
+set :rbenv_map_bins, %w{rake gem bundle ruby rails unicorn unicorn_rails} 
 set :deploy_to, "/var/www/#{domain_dir}"
 set :deploy_via, :remote_cache
+
 set :use_sudo, true
 server "clodo-storage", :app, :web, :db, :primary => true
 default_run_options[:pty] = true
@@ -81,6 +83,6 @@ namespace :deploy do
 
     desc "Precompile assets"
       task :precompile_assets, :except => { :no_release => true } do
-        run "bundle exec rake assets:precompile"
+        run "cd #{current_path} && bundle exec rake assets:precompile"
       end
 end
