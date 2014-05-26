@@ -74,3 +74,26 @@ namespace :db do
     put database_yml, "#{fetch(:current_path)}/config/database.yml"
   end
 end
+
+namespace :own do
+    desc "Zero-downtime restart of Unicorn"
+      task :restart do
+        on roles(:app) do
+          execute :kill, "-s USR2 `cat #{fetch(:shared_path)}/pids/unicorn.#{fetch(:domain_dir)}.pid`"
+        end
+    end
+
+    desc "Start unicorn"
+      task :start do
+        on roles(:app) do
+          within(current_path) { execute(:bundle, :exec, :unicorn_rails, "-c config/unicorn.rb -D") }
+        end
+    end
+
+    desc "Stop unicorn"
+      task :stop do
+        on roles(:app) do
+          execute :kill, "-s QUIT `cat #{shared_path}/pids/unicorn.#{fetch(:domain_dir)}.pid`"
+        end
+    end
+end

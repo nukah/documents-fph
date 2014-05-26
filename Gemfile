@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 3.2.8'
+gem 'rails'
 gem 'pg'
 gem 'unicorn'
 gem 'capistrano'
@@ -11,8 +11,8 @@ gem 'capistrano-bundler'
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  gem 'sass-rails',   '~> 3.2.3'
-  gem 'coffee-rails', '~> 3.2.1'
+  gem 'sass-rails'
+  gem 'coffee-rails'
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   gem 'therubyracer', :platforms => :ruby
@@ -20,21 +20,21 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
-gem 'jquery-rails', '~> 2.0.0'
+gem 'jquery-rails'
 
 
 # To use debugger
 # gem 'debugger'
 
 # Refinery CMS
-gem 'refinerycms', '~> 2.0.0'
+gem 'refinerycms', '~> 2.1.2'
 
 # Specify additional Refinery CMS Extensions here (all optional):
-gem 'refinerycms-i18n', '~> 2.0.0'
+gem 'refinerycms-i18n'
 #  gem 'refinerycms-blog', '~> 2.0.0'
 #  gem 'refinerycms-inquiries', '~> 2.0.0'
 #  gem 'refinerycms-search', '~> 2.0.0'
 #  gem 'refinerycms-page-images', '~> 2.0.0'
 
 
-gem 'refinerycms-documents', :git => 'https://github.com/nukah/refinerycms-documents.git' 
+gem 'refinerycms-documents', path: "vendor/extensions/documents"  #:git => 'https://github.com/nukah/refinerycms-documents.git' 
